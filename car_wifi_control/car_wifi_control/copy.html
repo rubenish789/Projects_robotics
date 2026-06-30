@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Car Control</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    button {
+      font-size: 20px;
+      padding: 20px;
+      margin: 10px;
+      width: 120px;
+      height: 80px;
+    }
+
+    .mode-button {
+      background-color: #4CAF50;
+      color: white;
+      font-size: 14px;
+      padding: 10px 12px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Car control</h1>
+
+  
+  <form method="POST" action="/mode">
+    <button type="submit" name="mode" value="{{ 'line' if mode == 'remote' else 'remote' }}" class="mode-button">
+      Switch mode:<br> 
+      {{ 'Line Follower' if mode == 'remote' else 'Remote Control' }}
+    </button>
+  </form>
+
+  {% if mode == 'remote' %}
+    
+    <div>
+      <button onmousedown="sendCommand('forward')" onmouseup="sendCommand('stop')" onmouseleave="sendCommand('stop')">Forward</button><br>
+      <button onmousedown="sendCommand('left')" onmouseup="sendCommand('stop')" onmouseleave="sendCommand('stop')">Left</button>
+      <button onmousedown="sendCommand('stop')">Stop</button>
+      <button onmousedown="sendCommand('right')" onmouseup="sendCommand('stop')" onmouseleave="sendCommand('stop')">Right</button><br>
+      <button onmousedown="sendCommand('backward')" onmouseup="sendCommand('stop')" onmouseleave="sendCommand('stop')">Backward</button>
+    </div>
+  {% else %}
+    <p>Right now Line Follower is active</p>
+  {% endif %}
+
+  <script>
+    function sendCommand(direction) {
+      fetch('/move', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'direction=' + direction
+      });
+    }
+  </script>
+
+</body>
+</html>
